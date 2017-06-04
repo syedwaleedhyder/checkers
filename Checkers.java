@@ -419,21 +419,21 @@ public class Checkers extends JPanel {
                /* First, draw a 2-pixel cyan border around the pieces that can be moved. */
                 g.setColor(Color.cyan);
                 for (int i = 0; i < legalMoves.length; i++) {
-                    g.drawRect(2 + legalMoves[i].fromCol * 20, 2 + legalMoves[i].fromRow * 20, 19, 19);
-                    g.drawRect(3 + legalMoves[i].fromCol * 20, 3 + legalMoves[i].fromRow * 20, 17, 17);
+                    g.drawRect(2 + legalMoves[i].fromCol * 40, 2 + legalMoves[i].fromRow * 40, 39, 39);
+                    g.drawRect(3 + legalMoves[i].fromCol * 40, 3 + legalMoves[i].fromRow * 40, 37, 37);
                 }
                /* If a piece is selected for moving (i.e. if selectedRow >= 0), then
                 draw a 2-pixel white border around that piece and draw green borders
                 around each square that that piece can be moved to. */
                 if (selectedRow >= 0) {
                     g.setColor(Color.white);
-                    g.drawRect(2 + selectedCol * 20, 2 + selectedRow * 20, 19, 19);
-                    g.drawRect(3 + selectedCol * 20, 3 + selectedRow * 20, 17, 17);
+                    g.drawRect(2 + selectedCol * 40, 2 + selectedRow * 40, 39, 39);
+                    g.drawRect(3 + selectedCol * 40, 3 + selectedRow * 40, 37, 37);
                     g.setColor(Color.green);
                     for (int i = 0; i < legalMoves.length; i++) {
                         if (legalMoves[i].fromCol == selectedCol && legalMoves[i].fromRow == selectedRow) {
-                            g.drawRect(2 + legalMoves[i].toCol * 20, 2 + legalMoves[i].toRow * 20, 19, 19);
-                            g.drawRect(3 + legalMoves[i].toCol * 20, 3 + legalMoves[i].toRow * 20, 17, 17);
+                            g.drawRect(2 + legalMoves[i].toCol * 40, 2 + legalMoves[i].toRow * 40, 29, 29);
+                            g.drawRect(3 + legalMoves[i].toCol * 40, 3 + legalMoves[i].toRow * 40, 27, 27);
                         }
                     }
                 }

@@ -52,7 +52,7 @@ public class Checkers extends JPanel {
     }
 
     private JButton newGameButton;  // Button for starting a new game.
-    private JButton resignButton;   // Button that a player can use to end 
+    private JButton resignButton;   // Button that a player can use to end
     // the game by resigning.
 
     private JLabel message;  // Label for displaying messages to the user.
@@ -66,10 +66,10 @@ public class Checkers extends JPanel {
     public Checkers() {
 
         setLayout(null);  // I will do the layout myself.
-        setPreferredSize(new Dimension(350, 250));
+        setPreferredSize(new Dimension(500, 500));
 
         setBackground(new Color(0, 150, 0));  // Dark green background.
-      
+
       /* Create the components and add them to the applet. */
 
         Board board = new Board();  // Note: The constructor for the
@@ -79,14 +79,14 @@ public class Checkers extends JPanel {
         add(newGameButton);
         add(resignButton);
         add(message);
-      
+
       /* Set the position and size of each component by calling
        its setBounds() method. */
 
-        board.setBounds(20, 20, 164, 164); // Note:  size MUST be 164-by-164 !
-        newGameButton.setBounds(210, 60, 120, 30);
-        resignButton.setBounds(210, 120, 120, 30);
-        message.setBounds(0, 200, 350, 30);
+        board.setBounds(20, 20, 324, 324); // Note:  size MUST be 164-by-164 !
+        newGameButton.setBounds(360, 120, 120, 30);
+        resignButton.setBounds(360, 180, 120, 30);
+        message.setBounds(0, 400, 350, 30);
 
     } // end constructor
 
@@ -135,7 +135,7 @@ public class Checkers extends JPanel {
         //    lists of legal moves.
 
         boolean gameInProgress; // Is a game currently in progress?
-      
+
       /* The next three variables are valid only when the game is in progress. */
 
         int currentPlayer;      // Whose turn is it now?  The possible values
@@ -187,7 +187,7 @@ public class Checkers extends JPanel {
          */
         void doNewGame() {
             if (gameInProgress == true) {
-                // This should not be possible, but it doens't hurt to check.
+                // This should not be possible, but it doesn't hurt to check.
                 message.setText("Finish the current game first!");
                 return;
             }
@@ -238,7 +238,7 @@ public class Checkers extends JPanel {
          * that a game is, in fact, in progress.
          */
         void doClickSquare(int row, int col) {
-         
+
          /* If the player clicked on one of the pieces that the player
           can move, mark this row and col as selected and return.  (This
           might change a previous selection.)  Reset the message, in
@@ -255,7 +255,7 @@ public class Checkers extends JPanel {
                     repaint();
                     return;
                 }
-         
+
          /* If no piece has been selected to be moved, the user must first
           select a piece.  Show an error message and return. */
 
@@ -263,7 +263,7 @@ public class Checkers extends JPanel {
                 message.setText("Click the piece you want to move.");
                 return;
             }
-         
+
          /* If the user clicked on a squre where the selected piece can be
           legally moved, then make the move and return. */
 
@@ -273,7 +273,7 @@ public class Checkers extends JPanel {
                     doMakeMove(legalMoves[i]);
                     return;
                 }
-         
+
          /* If we get to this point, there is a piece selected, and the square where
           the user just clicked is not one where that piece can be legally moved.
           Show an error message. */
@@ -291,7 +291,7 @@ public class Checkers extends JPanel {
         void doMakeMove(CheckersMove move) {
 
             board.makeMove(move);
-         
+
          /* If the move was a jump, it's possible that the player has another
           jump.  Check for legal jumps starting from the square that the player
           just moved to.  If there are any, the player must jump.  The same
@@ -311,7 +311,7 @@ public class Checkers extends JPanel {
                     return;
                 }
             }
-         
+
          /* The current player's turn is ended, so change to the other player.
           Get that player's legal moves.  If the player has no legal moves,
           then the game ends. */
@@ -335,12 +335,12 @@ public class Checkers extends JPanel {
                 else
                     message.setText("RED:  Make your move.");
             }
-         
+
          /* Set selectedRow = -1 to record that the player has not yet selected
           a piece to move. */
 
             selectedRow = -1;
-         
+
          /* As a courtesy to the user, if all legal moves use the same piece, then
           select that piece automatically so the use won't have to click on it
           to select it. */
@@ -358,7 +358,7 @@ public class Checkers extends JPanel {
                     selectedCol = legalMoves[0].fromCol;
                 }
             }
-         
+
          /* Make sure the board is redrawn in its new state. */
 
             repaint();
@@ -368,16 +368,16 @@ public class Checkers extends JPanel {
 
         /**
          * Draw  checkerboard pattern in gray and lightGray.  Draw the
-         * checkers.  If a game is in progress, hilite the legal moves.
+         * checkers.  If a game is in progress, highlight the legal moves.
          */
         public void paintComponent(Graphics g) {
-         
+
          /* Draw a two-pixel black border around the edges of the canvas. */
 
             g.setColor(Color.black);
             g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
             g.drawRect(1, 1, getSize().width - 3, getSize().height - 3);
-         
+
          /* Draw the squares of the checkerboard and the checkers. */
 
             for (int row = 0; row < 8; row++) {
@@ -386,32 +386,32 @@ public class Checkers extends JPanel {
                         g.setColor(Color.LIGHT_GRAY);
                     else
                         g.setColor(Color.GRAY);
-                    g.fillRect(2 + col * 20, 2 + row * 20, 20, 20);
+                    g.fillRect(2 + col * 40, 2 + row * 40, 40, 40);
                     switch (board.pieceAt(row, col)) {
                         case CheckersData.RED:
                             g.setColor(Color.RED);
-                            g.fillOval(4 + col * 20, 4 + row * 20, 15, 15);
+                            g.fillOval(6 + col * 40, 6 + row * 40, 30, 30);
                             break;
                         case CheckersData.BLACK:
                             g.setColor(Color.BLACK);
-                            g.fillOval(4 + col * 20, 4 + row * 20, 15, 15);
+                            g.fillOval(6 + col * 40, 6 + row * 40, 30, 30);
                             break;
                         case CheckersData.RED_KING:
                             g.setColor(Color.RED);
-                            g.fillOval(4 + col * 20, 4 + row * 20, 15, 15);
+                            g.fillOval(6 + col * 40, 6 + row * 40, 30, 30);
                             g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col * 20, 16 + row * 20);
+                            g.drawString("K", 18 + col * 40, 25 + row * 40);
                             break;
                         case CheckersData.BLACK_KING:
                             g.setColor(Color.BLACK);
-                            g.fillOval(4 + col * 20, 4 + row * 20, 15, 15);
+                            g.fillOval(6 + col * 40, 6 + row * 40, 30, 30);
                             g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col * 20, 16 + row * 20);
+                            g.drawString("K", 18 + col * 40, 25 + row * 40);
                             break;
                     }
                 }
             }
-         
+
          /* If a game is in progress, hilite the legal moves.   Note that legalMoves
           is never null while a game is in progress. */
 
@@ -423,7 +423,7 @@ public class Checkers extends JPanel {
                     g.drawRect(3 + legalMoves[i].fromCol * 20, 3 + legalMoves[i].fromRow * 20, 17, 17);
                 }
                /* If a piece is selected for moving (i.e. if selectedRow >= 0), then
-                draw a 2-pixel white border around that piece and draw green borders 
+                draw a 2-pixel white border around that piece and draw green borders
                 around each square that that piece can be moved to. */
                 if (selectedRow >= 0) {
                     g.setColor(Color.white);
@@ -483,7 +483,7 @@ public class Checkers extends JPanel {
      * Methods are provided to return lists of available legal moves.
      */
     private static class CheckersData {
-      
+
       /*  The following constants represent the possible contents of a square
           on the board.  The constants RED and BLACK also represent players
           in the game. */
@@ -496,7 +496,7 @@ public class Checkers extends JPanel {
                 BLACK_KING = 4;
 
 
-        int[][] board;  // board[r][c] is the contents of row r, column c.  
+        int[][] board;  // board[r][c] is the contents of row r, column c.
 
 
         /**
@@ -602,10 +602,10 @@ public class Checkers extends JPanel {
                 playerKing = BLACK_KING;
 
             ArrayList<CheckersMove> moves = new ArrayList<CheckersMove>();  // Moves will be stored in this list.
-         
+
          /*  First, check for any possible jumps.  Look at each square on the board.
           If that square contains one of the player's pieces, look at a possible
-          jump in each of the four directions from that square.  If there is 
+          jump in each of the four directions from that square.  If there is
           a legal jump in that direction, put it in the moves ArrayList.
           */
 
@@ -623,12 +623,12 @@ public class Checkers extends JPanel {
                     }
                 }
             }
-         
-         /*  If any jump moves were found, then the user must jump, so we don't 
+
+         /*  If any jump moves were found, then the user must jump, so we don't
           add any regular moves.  However, if no jumps were found, check for
           any legal regualar moves.  Look at each square on the board.
           If that square contains one of the player's pieces, look at a possible
-          move in each of the four directions from that square.  If there is 
+          move in each of the four directions from that square.  If there is
           a legal move in that direction, put it in the moves ArrayList.
           */
 
@@ -648,7 +648,7 @@ public class Checkers extends JPanel {
                     }
                 }
             }
-         
+
          /* If no legal moves have been found, return null.  Otherwise, create
           an array just big enough to hold all the legal moves, copy the
           legal moves from the ArrayList into the array, and return the array. */

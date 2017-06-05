@@ -7,89 +7,57 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 
-/**
- * This panel lets two uses play checkers against each other.
- * Red always starts the game.  If a player can jump an opponent's
- * piece, then the player must jump.  When a plyer can make no more
- * moves, the game ends.
- * <p>
- * The class has a main() routine that lets it be run as a stand-alone
- * application.  The application just opens a window that uses an object
- * of type Checkers as its content pane.
- * <p>
- * There is also a nested class, Checker.Applet, that can be used
- * as an applet version of the program.  The applet size should be
- * 350-by-250 (or very close to that).
- */
+
+ //Red always starts the game. The application just opens a window that uses an object of type Checkers as its content pane.
+
 public class Checkers extends JPanel {
 
-    /**
-     * Main routine makes it possible to run Checkers as a stand-alone
-     * application.  Opens a window showing a Checkers panel; the program
-     * ends when the user closes the window.
-     */
+    private JButton buttonReset;
+    private JButton buttonLeave;
+    private JLabel labelMessage;
+
     public static void main(String[] args) {
-        JFrame window = new JFrame("Checkers");
-        Checkers content = new Checkers();
-        window.setContentPane(content);
-        window.pack();
-        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setLocation((screensize.width - window.getWidth()) / 2,
-                (screensize.height - window.getHeight()) / 2);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-        window.setVisible(true);
+        JFrame frame = new JFrame("Checkers Game");
+        Checkers checkers = new Checkers();
+        frame.setContentPane(checkers);
+        frame.pack();
+        frame.setLocation(20, 20);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setVisible(true);
     }
 
     /**
-     * Nested applet class that can be used to run Checkers as an
-     * applet.  Size of the applet should be 350-by-250
+     * The constructor Checkers --> Board --> buttons and label
+     * adds and sets bounds of all the components (layout set manually)
      */
-    public static class Applet extends JApplet {
+    public Checkers() {
+
+        setLayout(null);
+        setPreferredSize(new Dimension(500, 500));
+
+        setBackground(new Color(0, 0, 150));  // Dark green background.
+
+      /* Create the components and add them to the applet. */
+
+        Board board = new Board();
+        add(board);
+        add(buttonReset);
+        add(buttonLeave);
+        add(labelMessage);
+
+        board.setBounds(20, 20, 324, 324);
+        buttonReset.setBounds(360, 120, 120, 30);
+        buttonLeave.setBounds(360, 180, 120, 30);
+        labelMessage.setBounds(0, 400, 350, 30);
+
+    } // end constructor
+
+    public static class Applet extends JApplet {  //Size 500*500
         public void init() {
             setContentPane(new Checkers());
         }
     }
-
-    private JButton newGameButton;  // Button for starting a new game.
-    private JButton resignButton;   // Button that a player can use to end
-    // the game by resigning.
-
-    private JLabel message;  // Label for displaying messages to the user.
-
-    /**
-     * The constructor creates the Board (which in turn creates and manages
-     * the buttons and message label), adds all the components, and sets
-     * the bounds of the components.  A null layout is used.  (This is
-     * the only thing that is done in the main Checkers class.)
-     */
-    public Checkers() {
-
-        setLayout(null);  // I will do the layout myself.
-        setPreferredSize(new Dimension(500, 500));
-
-        setBackground(new Color(0, 150, 0));  // Dark green background.
-
-      /* Create the components and add them to the applet. */
-
-        Board board = new Board();  // Note: The constructor for the
-        //   board also creates the buttons
-        //   and label.
-        add(board);
-        add(newGameButton);
-        add(resignButton);
-        add(message);
-
-      /* Set the position and size of each component by calling
-       its setBounds() method. */
-
-        board.setBounds(20, 20, 324, 324); // Note:  size MUST be 164-by-164 !
-        newGameButton.setBounds(360, 120, 120, 30);
-        resignButton.setBounds(360, 180, 120, 30);
-        message.setBounds(0, 400, 350, 30);
-
-    } // end constructor
-
 
     // --------------------  Nested Classes -------------------------------
 
@@ -158,13 +126,13 @@ public class Checkers extends JPanel {
         Board() {
             setBackground(Color.BLACK);
             addMouseListener(this);
-            resignButton = new JButton("Resign");
-            resignButton.addActionListener(this);
-            newGameButton = new JButton("New Game");
-            newGameButton.addActionListener(this);
-            message = new JLabel("", JLabel.CENTER);
-            message.setFont(new Font("Serif", Font.BOLD, 14));
-            message.setForeground(Color.green);
+            buttonLeave = new JButton("Leave");
+            buttonLeave.addActionListener(this);
+            buttonReset = new JButton("Reset");
+            buttonReset.addActionListener(this);
+            labelMessage = new JLabel("", JLabel.CENTER);
+            labelMessage.setFont(new Font("Serif", Font.BOLD, 14));
+            labelMessage.setForeground(Color.green);
             board = new CheckersData();
             doNewGame();
         }
@@ -175,9 +143,9 @@ public class Checkers extends JPanel {
          */
         public void actionPerformed(ActionEvent evt) {
             Object src = evt.getSource();
-            if (src == newGameButton)
+            if (src == buttonReset)
                 doNewGame();
-            else if (src == resignButton)
+            else if (src == buttonLeave)
                 doResign();
         }
 
@@ -188,17 +156,17 @@ public class Checkers extends JPanel {
         void doNewGame() {
             if (gameInProgress == true) {
                 // This should not be possible, but it doesn't hurt to check.
-                message.setText("Finish the current game first!");
+                labelMessage.setText("Finish the current game first!");
                 return;
             }
             board.setUpGame();   // Set up the pieces.
             currentPlayer = CheckersData.RED;   // RED moves first.
             legalMoves = board.getLegalMoves(CheckersData.RED);  // Get RED's legal moves.
             selectedRow = -1;   // RED has not yet selected a piece to move.
-            message.setText("Red:  Make your move.");
+            labelMessage.setText("Red:  Make your move.");
             gameInProgress = true;
-            newGameButton.setEnabled(false);
-            resignButton.setEnabled(true);
+            buttonReset.setEnabled(false);
+            buttonLeave.setEnabled(true);
             repaint();
         }
 
@@ -208,7 +176,7 @@ public class Checkers extends JPanel {
          */
         void doResign() {
             if (gameInProgress == false) {
-                message.setText("There is no game in progress!");
+                labelMessage.setText("There is no game in progress!");
                 return;
             }
             if (currentPlayer == CheckersData.RED)
@@ -219,15 +187,15 @@ public class Checkers extends JPanel {
 
 
         /**
-         * The game ends.  The parameter, str, is displayed as a message
+         * The game ends.  The parameter, str, is displayed as a labelMessage
          * to the user.  The states of the buttons are adjusted so playes
          * can start a new game.  This method is called when the game
          * ends at any point in this class.
          */
         void gameOver(String str) {
-            message.setText(str);
-            newGameButton.setEnabled(true);
-            resignButton.setEnabled(false);
+            labelMessage.setText(str);
+            buttonReset.setEnabled(true);
+            buttonLeave.setEnabled(false);
             gameInProgress = false;
         }
 
@@ -241,26 +209,26 @@ public class Checkers extends JPanel {
 
          /* If the player clicked on one of the pieces that the player
           can move, mark this row and col as selected and return.  (This
-          might change a previous selection.)  Reset the message, in
-          case it was previously displaying an error message. */
+          might change a previous selection.)  Reset the labelMessage, in
+          case it was previously displaying an error labelMessage. */
 
             for (int i = 0; i < legalMoves.length; i++)
                 if (legalMoves[i].fromRow == row && legalMoves[i].fromCol == col) {
                     selectedRow = row;
                     selectedCol = col;
                     if (currentPlayer == CheckersData.RED)
-                        message.setText("RED:  Make your move.");
+                        labelMessage.setText("RED:  Make your move.");
                     else
-                        message.setText("BLACK:  Make your move.");
+                        labelMessage.setText("BLACK:  Make your move.");
                     repaint();
                     return;
                 }
 
          /* If no piece has been selected to be moved, the user must first
-          select a piece.  Show an error message and return. */
+          select a piece.  Show an error labelMessage and return. */
 
             if (selectedRow < 0) {
-                message.setText("Click the piece you want to move.");
+                labelMessage.setText("Click the piece you want to move.");
                 return;
             }
 
@@ -276,9 +244,9 @@ public class Checkers extends JPanel {
 
          /* If we get to this point, there is a piece selected, and the square where
           the user just clicked is not one where that piece can be legally moved.
-          Show an error message. */
+          Show an error labelMessage. */
 
-            message.setText("Click the square you want to move to.");
+            labelMessage.setText("Click the square you want to move to.");
 
         }  // end doClickSquare()
 
@@ -302,9 +270,9 @@ public class Checkers extends JPanel {
                 legalMoves = board.getLegalJumpsFrom(currentPlayer, move.toRow, move.toCol);
                 if (legalMoves != null) {
                     if (currentPlayer == CheckersData.RED)
-                        message.setText("RED:  You must continue jumping.");
+                        labelMessage.setText("RED:  You must continue jumping.");
                     else
-                        message.setText("BLACK:  You must continue jumping.");
+                        labelMessage.setText("BLACK:  You must continue jumping.");
                     selectedRow = move.toRow;  // Since only one piece can be moved, select it.
                     selectedCol = move.toCol;
                     repaint();
@@ -322,18 +290,18 @@ public class Checkers extends JPanel {
                 if (legalMoves == null)
                     gameOver("BLACK has no moves.  RED wins.");
                 else if (legalMoves[0].isJump())
-                    message.setText("BLACK:  Make your move.  You must jump.");
+                    labelMessage.setText("BLACK:  Make your move.  You must jump.");
                 else
-                    message.setText("BLACK:  Make your move.");
+                    labelMessage.setText("BLACK:  Make your move.");
             } else {
                 currentPlayer = CheckersData.RED;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null)
                     gameOver("RED has no moves.  BLACK wins.");
                 else if (legalMoves[0].isJump())
-                    message.setText("RED:  Make your move.  You must jump.");
+                    labelMessage.setText("RED:  Make your move.  You must jump.");
                 else
-                    message.setText("RED:  Make your move.");
+                    labelMessage.setText("RED:  Make your move.");
             }
 
          /* Set selectedRow = -1 to record that the player has not yet selected
@@ -444,12 +412,12 @@ public class Checkers extends JPanel {
 
         /**
          * Respond to a user click on the board.  If no game is in progress, show
-         * an error message.  Otherwise, find the row and column that the user
+         * an error labelMessage.  Otherwise, find the row and column that the user
          * clicked and call doClickSquare() to handle it.
          */
         public void mousePressed(MouseEvent evt) {
             if (gameInProgress == false)
-                message.setText("Click \"New Game\" to start a new game.");
+                labelMessage.setText("Click \"New Game\" to start a new game.");
             else {
                 int col = (evt.getX() - 2) / 40;
                 int row = (evt.getY() - 2) / 40;

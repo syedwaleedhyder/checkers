@@ -36,7 +36,7 @@ public class Checkers extends JPanel {
         setLayout(null);
         setPreferredSize(new Dimension(500, 500));
 
-        setBackground(new Color(0, 0, 150));  // Dark green background.
+        setBackground(new Color(50, 50, 50));  // Dark green background.
 
       /* Create the components and add them to the applet. */
 
@@ -353,7 +353,7 @@ public class Checkers extends JPanel {
                     if (row % 2 == col % 2)
                         g.setColor(Color.LIGHT_GRAY);
                     else
-                        g.setColor(Color.GRAY);
+                        g.setColor(Color.BLACK);
                     g.fillRect(2 + col * 40, 2 + row * 40, 40, 40);
                     switch (board.pieceAt(row, col)) {
                         case CheckersData.RED:

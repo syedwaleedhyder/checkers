@@ -15,6 +15,7 @@ public class Checkers extends JPanel {
     private JButton buttonReset;
     private JButton buttonLeave;
     private JLabel labelMessage;
+    private JLabel labelDevelopedBy;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Checkers Game");
@@ -36,20 +37,20 @@ public class Checkers extends JPanel {
         setLayout(null);
         setPreferredSize(new Dimension(500, 500));
 
-        setBackground(new Color(50, 50, 50));  // Dark green background.
-
-      /* Create the components and add them to the applet. */
+        setBackground(new Color(50, 50, 50));  // Dark gray screen
 
         Board board = new Board();
         add(board);
         add(buttonReset);
         add(buttonLeave);
         add(labelMessage);
+        add(labelDevelopedBy);
 
         board.setBounds(20, 20, 324, 324);
         buttonReset.setBounds(360, 120, 120, 30);
         buttonLeave.setBounds(360, 180, 120, 30);
         labelMessage.setBounds(0, 400, 350, 30);
+        labelDevelopedBy.setBounds(10,480,450,30);
 
     } // end constructor
 
@@ -62,17 +63,13 @@ public class Checkers extends JPanel {
     // --------------------  Nested Classes -------------------------------
 
     /**
-     * A CheckersMove object represents a move in the game of Checkers.
-     * It holds the row and column of the piece that is to be moved
-     * and the row and column of the square to which it is to be moved.
-     * (This class makes no guarantee that the move is legal.)
+     * holds row/column of piece to be move AND square to which it is to be moved.
      */
     private static class CheckersMove {
         int fromRow, fromCol;  // Position of piece to be moved.
         int toRow, toCol;      // Square it is to move to.
 
-        CheckersMove(int r1, int c1, int r2, int c2) {
-            // Constructor.  Just set the values of the instance variables.
+        CheckersMove(int r1, int c1, int r2, int c2) { //constructor
             fromRow = r1;
             fromCol = c1;
             toRow = r2;
@@ -80,50 +77,30 @@ public class Checkers extends JPanel {
         }
 
         boolean isJump() {
-            // Test whether this move is a jump.  It is assumed that
-            // the move is legal.  In a jump, the piece moves two
-            // rows.  (In a regular move, it only moves one row.)
             return (fromRow - toRow == 2 || fromRow - toRow == -2);
         }
     }  // end class CheckersMove.
 
 
-    /**
-     * This panel displays a 160-by-160 checkerboard pattern with
-     * a 2-pixel black border.  It is assumed that the size of the
-     * canvas is set to exactly 164-by-164 pixels.  This class does
-     * the work of letting the users play checkers, and it displays
-     * the checkerboard.
-     */
     private class Board extends JPanel implements ActionListener, MouseListener {
 
 
-        CheckersData board;  // The data for the checkers board is kept here.
-        //    This board is also responsible for generating
-        //    lists of legal moves.
+        CheckersData board;  // data of checkers board. generates list of legal moves
 
-        boolean gameInProgress; // Is a game currently in progress?
+        boolean gameInProgress; // used in reset game..
 
-      /* The next three variables are valid only when the game is in progress. */
+        int currentPlayer;      //  CheckersData.RED / CheckersData.BLACK.
 
-        int currentPlayer;      // Whose turn is it now?  The possible values
-        //    are CheckersData.RED and CheckersData.BLACK.
+        int selectedRow, selectedCol;
 
-        int selectedRow, selectedCol;  // If the current player has selected a piece to
-        //     move, these give the row and column
-        //     containing that piece.  If no piece is
-        //     yet selected, then selectedRow is -1.
-
-        CheckersMove[] legalMoves;  // An array containing the legal moves for the
-        //   current player.
+        CheckersMove[] legalMoves;
 
 
         /**
-         * Constructor.  Create the buttons and lable.  Listens for mouse
-         * clicks and for clicks on the buttons.  Create the board and
+         *Create the board and
          * start the first game.
          */
-        Board() {
+        Board() { // constructor: buttons, labels, listener of mouse click, button click.
             setBackground(Color.BLACK);
             addMouseListener(this);
             buttonLeave = new JButton("Leave");
@@ -133,8 +110,11 @@ public class Checkers extends JPanel {
             labelMessage = new JLabel("", JLabel.CENTER);
             labelMessage.setFont(new Font("Serif", Font.BOLD, 14));
             labelMessage.setForeground(Color.green);
+            labelDevelopedBy = new JLabel("Developed by: Hamna Moeeiz, Urvah Saikhani, Syed Waleed Hyder ", JLabel.LEFT);
+            labelDevelopedBy.setFont(new Font("Serif", Font.BOLD, 14));
+            labelDevelopedBy.setForeground(Color.cyan);
             board = new CheckersData();
-            doNewGame();
+            doReset();
         }
 
 
@@ -144,18 +124,16 @@ public class Checkers extends JPanel {
         public void actionPerformed(ActionEvent evt) {
             Object src = evt.getSource();
             if (src == buttonReset)
-                doNewGame();
+                doReset();
             else if (src == buttonLeave)
                 doResign();
         }
 
-
         /**
-         * Start a new game
+         * Reset the game and initializes the pieces
          */
-        void doNewGame() {
-            if (gameInProgress == true) {
-                // This should not be possible, but it doesn't hurt to check.
+        void doReset() {
+            if (gameInProgress) {
                 labelMessage.setText("Finish the current game first!");
                 return;
             }
@@ -165,15 +143,11 @@ public class Checkers extends JPanel {
             selectedRow = -1;   // RED has not yet selected a piece to move.
             labelMessage.setText("Red:  Make your move.");
             gameInProgress = true;
-            buttonReset.setEnabled(false);
+            buttonReset.setEnabled(true);
             buttonLeave.setEnabled(true);
             repaint();
         }
 
-
-        /**
-         * Current player resigns.  Game ends.  Opponent wins.
-         */
         void doResign() {
             if (gameInProgress == false) {
                 labelMessage.setText("There is no game in progress!");
@@ -452,10 +426,6 @@ public class Checkers extends JPanel {
      */
     private static class CheckersData {
 
-      /*  The following constants represent the possible contents of a square
-          on the board.  The constants RED and BLACK also represent players
-          in the game. */
-
         static final int
                 EMPTY = 0,
                 RED = 1,
@@ -464,25 +434,14 @@ public class Checkers extends JPanel {
                 BLACK_KING = 4;
 
 
-        int[][] board;  // board[r][c] is the contents of row r, column c.
+        int[][] board;  // contents of row r, column c.
 
-
-        /**
-         * Constructor.  Create the board and set it up for a new game.
-         */
         CheckersData() {
             board = new int[8][8];
             setUpGame();
         }
 
-
-        /**
-         * Set up the board with checkers in position for the beginning
-         * of a game.  Note that checkers can only be found in squares
-         * that satisfy  row % 2 == col % 2.  At the start of the game,
-         * all such squares in the first three rows contain black squares
-         * and all such squares in the last three rows contain red squares.
-         */
+        //row % 2 == col % 2
         void setUpGame() {
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
@@ -498,7 +457,7 @@ public class Checkers extends JPanel {
                     }
                 }
             }
-        }  // end setUpGame()
+        }  //setUpGame()
 
 
         /**
